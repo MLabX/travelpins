@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+# editor
+.vscode/
+.idea/
+# dependencies / build artifacts (none needed — this is a static site)
+node_modules/
+# local scratch
+*.log
