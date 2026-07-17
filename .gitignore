@@ -3,7 +3,9 @@
 # editor
 .vscode/
 .idea/
-# dependencies / build artifacts (none needed — this is a static site)
+# dependencies / browser test artifacts
 node_modules/
+playwright-report/
+test-results/
 # local scratch
 *.log

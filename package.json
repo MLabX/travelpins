@@ -1,0 +1,12 @@
+{
+  "name": "travelpins",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A small static map for trusted place recommendations.",
+  "scripts": {
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1"
+  }
+}

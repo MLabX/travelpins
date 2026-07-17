@@ -1,8 +1,8 @@
 # TravelPins ☕🗺️
 
-A lightweight, no-API-key travel map. Pin the places you've been — coffee shops, food, sights, bars — filter and search them, and **share your whole map as a single link** (no server, no account).
+A lightweight, no-API-key personal atlas. Pin places worth remembering, filter and search them, and **share your whole map as a single link** (no server, no account).
 
-Built with plain HTML + [Leaflet](https://leafletjs.com) + OpenStreetMap tiles. Two files, no build step.
+Built with plain HTML + [Leaflet](https://leafletjs.com) + OpenStreetMap data rendered with CARTO Voyager tiles. The runtime has no build step.
 
 - `index.html` — the entire app
 - `data.js` — the seed data (edit this to change what loads on first run)
@@ -62,6 +62,17 @@ The **Share this map** action encodes every pin into the URL itself (gzip → ba
 
 > Note: a shared link only opens on someone else's device once the app is **hosted** (Options A–D). Opened as a local `file://`, links only work on your own machine.
 
+## Why the map is keyless
+
+TravelPins intentionally uses Leaflet and CARTO-hosted OpenStreetMap tiles so each deployment can work without inheriting somebody else's API key, billing account, or quota. Google Maps is a sensible future adapter when a deployment needs Google Places, routing, or place details and can provide its own restricted browser key. It is not required for the core personal-atlas experience.
+
+## Browser tests
+
+```bash
+npm install
+npm run test:browser
+```
+
 ## Editing the seed data
 
 Open `data.js` and edit the `window.TRAVEL_PINS` array. Each entry:
@@ -69,7 +80,8 @@ Open `data.js` and edit the `window.TRAVEL_PINS` array. Each entry:
 ```js
 { name: "Blue Bottle Coffee", city: "Tokyo", category: "coffee",
   lat: 35.6659, lng: 139.7085, rating: 5, notes: "Pour-over heaven.",
-  image: "https://…" /* optional */ }
+  image: "https://…", /* optional primary photo */
+  images: ["https://…", "https://…"] /* optional gallery */ }
 ```
 
 Categories: `coffee`, `food`, `sight`, `bar`, `other`. You can also **Import** a JSON/CSV or drag one onto the map.
