@@ -365,9 +365,9 @@
   @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
 
   @media(max-width:640px){
-    #sidebar{top:auto;left:0;right:0;bottom:0;width:auto;height:66vh;border-radius:12px 12px 0 0;transform:none;transition:transform .45s var(--ease)}
+    #sidebar{top:auto;left:0;right:0;bottom:0;width:auto;height:66vh;border-radius:12px 12px 0 0;transform:none;transition:transform .45s var(--ease),opacity .24s ease}
     #sidebar.collapsed{transform:translateY(calc(66vh - 134px));opacity:1}
-    #sidebar.popup-peek{transform:translateY(calc(66vh - 76px));opacity:1}
+    #sidebar.popup-peek{transform:translateY(calc(100% + 12px));opacity:0;pointer-events:none}
     .sheet-handle{display:block;padding:10px 0 2px;cursor:grab;flex:none}
     .sheet-handle .bar{display:block;width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto}
     .brand{padding:10px 24px 30px}
@@ -386,9 +386,10 @@
     .leaflet-bar a,.leaflet-bar button{width:42px!important;height:42px!important;line-height:42px!important}
     .leaflet-popup{width:min(354px,calc(100vw - 24px))!important;max-width:calc(100vw - 24px)!important}
     .leaflet-popup-content-wrapper{border-radius:14px;max-width:100%}
-    .leaflet-popup-content{width:auto!important;max-height:calc(100dvh - 120px)}
+    .leaflet-popup-content{width:auto!important;max-height:calc(100dvh - 104px);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
     .pop .pop-actions button{min-height:42px}
     .pop.has-photo{width:min(320px,calc(100vw - 58px))}
+    body.popup-open .leaflet-control-zoom,body.popup-open .fitall{opacity:0;pointer-events:none}
     .viewer-figure{width:calc(100vw - 24px);height:calc(100dvh - 104px)}
     .viewer-close{right:12px;top:12px}
     .viewer-nav{top:auto;bottom:18px;width:46px;height:46px;border-radius:50%;transform:none}
@@ -714,7 +715,7 @@ function makeIcon(cat){ const c=CATEGORIES[cat]||CATEGORIES.other;
   return L.divIcon({ className:"", iconSize:[30,40], iconAnchor:[15,38], popupAnchor:[0,-34], html:`<div class="mk">${pinSVG(c.color)}</div>` }); }
 function popupPadding(){
   const panel=document.getElementById("sidebar");
-  if(isMobile()) return { topLeft:L.point(18,18), bottomRight:L.point(18,(panel?.offsetHeight||0)+18) };
+  if(isMobile()) return { topLeft:L.point(16,16), bottomRight:L.point(16,16) };
   const panelRight=panel&&!panel.classList.contains("collapsed")?panel.getBoundingClientRect().right:0;
   return { topLeft:L.point(panelRight+18,18), bottomRight:L.point(18,18) };
 }

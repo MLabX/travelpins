@@ -178,6 +178,45 @@ test("photo viewer stays inside a phone viewport", async ({ page }) => {
   expect(bounds.y + bounds.height).toBeLessThanOrEqual(844);
 });
 
+test("mobile place details own the viewport and restore the map sheet", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByText("Seven Miles Cafe", { exact: true }).click();
+
+  const sidebar = page.locator("#sidebar");
+  await expect(sidebar).toHaveClass(/popup-peek/);
+  await expect(sidebar).toHaveCSS("opacity", "0");
+  await expect(sidebar).toHaveCSS("pointer-events", "none");
+  await expect(page.locator(".leaflet-control-zoom")).toHaveCSS("pointer-events", "none");
+  await expect(page.locator(".fitall")).toHaveCSS("pointer-events", "none");
+
+  const regular = await page.evaluate(() => {
+    const popup = document.querySelector(".leaflet-popup").getBoundingClientRect();
+    const sheet = document.querySelector("#sidebar").getBoundingClientRect();
+    return {
+      popupInside: popup.left >= 0 && popup.right <= innerWidth && popup.top >= 0 && popup.bottom <= innerHeight,
+      sheetGone: sheet.top >= innerHeight,
+      overflow: document.documentElement.scrollWidth > innerWidth,
+    };
+  });
+  expect(regular).toEqual({ popupInside: true, sheetGone: true, overflow: false });
+
+  await page.setViewportSize({ width: 320, height: 568 });
+  await expect.poll(() => page.locator(".leaflet-popup").evaluate((popup) => {
+    const box = popup.getBoundingClientRect();
+    return box.left >= 0 && box.right <= innerWidth && box.top >= 0 && box.bottom <= innerHeight;
+  })).toBe(true);
+  const scroll = await page.locator(".leaflet-popup-content").evaluate((content) => ({
+    canScroll: content.scrollHeight > content.clientHeight,
+    noPageOverflow: document.documentElement.scrollWidth <= innerWidth,
+  }));
+  expect(scroll).toEqual({ canScroll: true, noPageOverflow: true });
+
+  await page.locator(".leaflet-popup-close-button").click();
+  await expect(sidebar).not.toHaveClass(/popup-peek/);
+  await expect(sidebar).toHaveCSS("opacity", "1");
+  await expect(sidebar).toHaveCSS("pointer-events", "auto");
+});
+
 test("an open popup reflows when a desktop window is narrowed", async ({ page }) => {
   await page.setViewportSize({ width: 1100, height: 844 });
   await page.getByText("Seven Miles Cafe", { exact: true }).click();
