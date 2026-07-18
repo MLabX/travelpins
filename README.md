@@ -62,9 +62,24 @@ The **Share this map** action encodes every pin into the URL itself (gzip → ba
 
 > Note: a shared link only opens on someone else's device once the app is **hosted** (Options A–D). Opened as a local `file://`, links only work on your own machine.
 
-## Why the map is keyless
+## Nearby discovery and map providers
 
 TravelPins intentionally uses Leaflet and CARTO-hosted OpenStreetMap tiles so each deployment can work without inheriting somebody else's API key, billing account, or quota. Google Maps is a sensible future adapter when a deployment needs Google Places, routing, or place details and can provide its own restricted browser key. It is not required for the core personal-atlas experience.
+
+The `Somewhere new` picker works without configuration through a bounded
+OpenStreetMap Nominatim search. One explicit user action makes one request; the
+returned candidates are reused for subsequent choices in that picker session. A
+deployment can opt into Google Places by defining a
+referrer-restricted browser key before the application script runs:
+
+```html
+<script>window.TRAVELPINS_GOOGLE_MAPS_KEY = "your-restricted-key";</script>
+```
+
+Restrict the key to the deployment's HTTPS origin and to Places API (New). The
+picker requests only Pro-level identity, address, location, type, and Maps URL
+fields; it does not request ratings, reviews, or photos. Google results remain
+transient and display `Google Maps` attribution in the result card.
 
 ## Browser tests
 
