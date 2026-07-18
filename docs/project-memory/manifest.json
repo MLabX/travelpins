@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-07-19",
+  "repository": "https://github.com/MLabX/travelpins",
+  "productBranch": "main",
+  "memoryBranch": "codex/project-memory",
+  "archiveBranches": {
+    "codex/archive-seal-explorations": "Rejected seal and vessel identity studies; never merge without a new identity review."
+  },
+  "productCommitAtCapture": "0b1aa0c9fe11c96f8afd62ebbf7ba01664c30c7d",
+  "runtime": {
+    "type": "static-site",
+    "entry": "index.html",
+    "seedData": "data.js",
+    "buildRequired": false,
+    "localCommand": "python3 -m http.server 4173 --bind 127.0.0.1",
+    "testCommand": "npm run test:browser"
+  },
+  "deployment": {
+    "provider": "GitHub Pages",
+    "triggerBranch": "main",
+    "workflow": ".github/workflows/deploy.yml",
+    "expectedUrl": "https://mlabx.github.io/travelpins/"
+  },
+  "keyDocuments": [
+    "AGENTS.md",
+    "PROJECT_MEMORY.md",
+    "docs/design/constitution.md",
+    "docs/design/decisions.md",
+    "docs/design/voice-and-copy.md",
+    "docs/project-memory/origin-and-evolution.md",
+    "docs/project-memory/architecture-and-data.md",
+    "docs/project-memory/lessons-learned.md",
+    "docs/project-memory/workflows.md",
+    "docs/project-memory/current-handoff.md"
+  ],
+  "verificationAtCapture": {
+    "playwrightTests": 26,
+    "status": "passing"
+  }
+}

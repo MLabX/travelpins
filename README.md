@@ -88,6 +88,17 @@ npm install
 npm run test:browser
 ```
 
+## Project memory
+
+The complete product history, design rationale, lessons, and working workflows
+live on the `codex/project-memory` branch. Start with `AGENTS.md` and
+`PROJECT_MEMORY.md` on that branch.
+
+```bash
+git switch codex/project-memory
+npm run test:memory
+```
+
 ## Editing the seed data
 
 Open `data.js` and edit the `window.TRAVEL_PINS` array. Each entry:

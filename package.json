@@ -4,7 +4,8 @@
   "private": true,
   "description": "A small static map for trusted place recommendations.",
   "scripts": {
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:memory": "node scripts/verify-project-memory.mjs"
   },
   "devDependencies": {
     "playwright": "^1.61.1"
