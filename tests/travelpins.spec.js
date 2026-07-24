@@ -211,16 +211,22 @@ test("map toggle yields while a popup is open and returns when it closes", async
   await expect(toggle).toHaveCSS("pointer-events", "auto");
 });
 
-test("updated seed adds Seven Miles with a working two-photo memory", async ({ page }) => {
-  expect(await page.evaluate(() => window.TRAVEL_PINS.length)).toBe(22);
+test("updated seed includes recent team memories with working photos", async ({ page }) => {
+  expect(await page.evaluate(() => window.TRAVEL_PINS.length)).toBe(23);
+  const chinatown = await page.evaluate(() => window.TRAVEL_PINS.find((pin) => pin.name === "Chinatown Country Club - Coffee House"));
+  expect(chinatown).toMatchObject({ recommended: true, area: "CBD", visitedAt: "2026-07-24", rating: 0 });
+  expect(chinatown.images).toHaveLength(2);
+  expect(chinatown.notes).toContain("Coffee feedback was mixed");
+
   const sevenMiles = await page.evaluate(() => window.TRAVEL_PINS.find((pin) => pin.name === "Seven Miles Cafe"));
   expect(sevenMiles).toMatchObject({ score: 7.5, recommended: true, area: "CBD", visitedAt: "2026-07-17" });
   expect(sevenMiles.images).toHaveLength(2);
 
-  await page.getByText("Seven Miles Cafe", { exact: true }).click();
+  await page.getByText("Chinatown Country Club - Coffee House", { exact: true }).click();
   const popup = page.locator(".leaflet-popup");
   await expect(popup).toBeVisible();
   await expect(popup.locator(".photo")).toHaveCount(2);
+  await expect(popup).toContainText("Coffee feedback was mixed");
   await expect(popup.locator(".photo.active")).toHaveAttribute("alt", /photo 1/);
   await popup.getByRole("button", { name: "Next photo" }).click();
   await expect(popup.locator(".photo.active")).toHaveAttribute("alt", /photo 2/);
@@ -431,10 +437,11 @@ test("category filters return when the map contains more than one kind", async (
 
 test("personal list leads with recent memories and keeps ratings out of the index", async ({ page }) => {
   const cards = page.locator("#list .card");
-  await expect(cards.nth(0).locator(".t")).toHaveText("Seven Miles Cafe");
-  await expect(cards.nth(0).locator(".m")).toContainText("Visited 17 Jul");
-  await expect(cards.nth(0).locator(".memory")).toContainText("whole group");
-  await expect(cards.nth(1).locator(".t")).toHaveText("Meisterstück");
+  await expect(cards.nth(0).locator(".t")).toHaveText("Chinatown Country Club - Coffee House");
+  await expect(cards.nth(0).locator(".m")).toContainText("Visited 24 Jul");
+  await expect(cards.nth(0).locator(".memory")).toContainText("good vibe");
+  await expect(cards.nth(1).locator(".t")).toHaveText("Seven Miles Cafe");
+  await expect(cards.nth(2).locator(".t")).toHaveText("Meisterstück");
   await expect(page.locator("#list .stars")).toHaveCount(0);
   await expect(page.locator("#list .list-section")).toHaveText("More from your map");
 });
@@ -467,13 +474,14 @@ test("memory rows remain calm and contained on a narrow screen", async ({ page }
 
 test("existing personal maps receive the new seed visit once", async ({ page }) => {
   await page.evaluate(() => {
-    const oldPins = window.TRAVEL_PINS.filter((pin) => pin.name !== "Seven Miles Cafe").map((pin, index) => ({ id: index + 1, ...pin }));
+    const oldPins = window.TRAVEL_PINS.filter((pin) => pin.name !== "Chinatown Country Club - Coffee House").map((pin, index) => ({ id: index + 1, ...pin }));
     localStorage.setItem("travelpins.v2", JSON.stringify(oldPins));
-    localStorage.setItem("travelpins.v2.seedUpdates", JSON.stringify(["meisterstuck-team-tour-2026-07-10"]));
-    localStorage.setItem("travelpins.v2.seedVersion", "roaming-scroll-2026-07-17");
+    localStorage.setItem("travelpins.v2.seedUpdates", JSON.stringify(["meisterstuck-team-tour-2026-07-10", "seven-miles-team-tour-2026-07-17"]));
+    localStorage.setItem("travelpins.v2.seedVersion", "roaming-scroll-2026-07-17.3");
   });
   await page.reload();
 
   const names = await page.evaluate(() => JSON.parse(localStorage.getItem("travelpins.v2")).map((pin) => pin.name));
+  expect(names.filter((name) => name === "Chinatown Country Club - Coffee House")).toHaveLength(1);
   expect(names.filter((name) => name === "Seven Miles Cafe")).toHaveLength(1);
 });
